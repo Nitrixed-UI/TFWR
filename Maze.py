@@ -28,6 +28,9 @@ def solveMaze():
 		y = get_pos_y()
 
 		move(directions[facing % 4])
+		if FarmingChecks.is_over(Entities.Treasure):
+			harvest()
+			return
 
 		facing += 1
 		if x == get_pos_x() and y == get_pos_y():
@@ -95,3 +98,9 @@ def getBranching():
 			branching.append([direction, [newX, newY]])
 		ind += 1
 	return branching
+
+def main():
+	startMaze()
+
+if __name__ == "__main__":
+	main()
