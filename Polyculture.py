@@ -1,4 +1,5 @@
 import FarmingUtils
+import FarmingChecks
 from Helpers import goto
 
 WORLD_SIZE = get_world_size()

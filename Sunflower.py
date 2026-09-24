@@ -56,7 +56,7 @@ def scan_all_sunflowers():
 	global row_results
 
 	row_results = []
-	for i in range(WORLD_SIZE):
+	for row in range(WORLD_SIZE):
 		row_results.append([])
 
 	for row in range(WORLD_SIZE):
@@ -74,7 +74,6 @@ def scan_all_sunflowers():
 	while num_drones() > 1:
 		pass
 
-	# Pure Python, no game actions -- merge per-row lists into one dict.
 	sunflowers = {}
 	for row in range(WORLD_SIZE):
 		for entry in row_results[row]:
@@ -110,9 +109,8 @@ def find_max_position(sunflowers, harvested):
 
 
 def harvest_priority_sequential(sunflowers):
-	# Must stay single-drone and re-derive the current max after every
-	# harvest -- harvesting anything other than the current max not only
-	# loses that harvest's bonus, it also zeroes out the very next harvest.
+	# While at least ten remain, re-derive the current maximum after every
+	# harvest so the largest remaining sunflower gets the bonus.
 	harvested = set()
 	remaining = len(sunflowers)
 
