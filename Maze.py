@@ -1,5 +1,6 @@
 import FarmingUtils
 import FarmingChecks
+import Replant
 
 def startMaze():
 	clear()
@@ -15,14 +16,14 @@ def useSubstance():
 	if num_items(Items.Weird_Substance) >= n_substance:
 		use_item(Items.Weird_Substance, n_substance)
 	else:
-		replant(get_world_size(), Entities.Bush, 0.3, False)
+		Replant.replant(get_world_size(), Entities.Bush, 0.3, False)
 
 def solveMaze():
 
 	facing = 0
 	directions = [North, East, South, West]
 
-	while get_entity_type() != Entities.Treasure:
+	while not FarmingChecks.is_over(Entities.Treasure):
 		x = get_pos_x()
 		y = get_pos_y()
 

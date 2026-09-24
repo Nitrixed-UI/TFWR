@@ -1,3 +1,6 @@
+import FarmingUtils
+from Helpers import goto
+
 WORLD_SIZE = get_world_size()
 MAX_DRONES = max_drones()
 SPAWN_LIMIT = min(WORLD_SIZE, MAX_DRONES)  # never try to spawn more than the cap allows
@@ -14,7 +17,7 @@ def plant_and_sort_all_rows():
 	global WORLD_SIZE
 	global SPAWN_LIMIT
 	for row in range(WORLD_SIZE):
-		move_to(0, row)
+		goto(0, row)
 
 		handled = False
 		if num_drones() >= SPAWN_LIMIT:
@@ -24,7 +27,7 @@ def plant_and_sort_all_rows():
 		if not handled:
 			spawn_drone(pas_current_row)
 
-	move_to(0, 1)
+	goto(0, 1)
 	while num_drones() > 1:
 		pass
 
@@ -33,8 +36,8 @@ def pas_current_row():
 	global WORLD_SIZE
 	row = get_pos_y()
 	for col in range(WORLD_SIZE):
-		move_to(col, row)
-		till()
+		goto(col, row)
+		FarmingUtils.Till()
 		plant(Entities.Cactus)
 		insertion_sort_row_step()
 
@@ -57,7 +60,7 @@ def sort_all_columns():
 	global WORLD_SIZE
 	global SPAWN_LIMIT
 	for col in range(WORLD_SIZE):
-		move_to(col, 1)
+		goto(col, 1)
 
 		handled = False
 		if num_drones() >= SPAWN_LIMIT:
@@ -96,41 +99,6 @@ def insertion_sort_column_step():
 			return
 
 	move(North)
-
-
-def move_to(x, y):
-	global WORLD_SIZE
-	half = WORLD_SIZE / 2
-
-	while True:
-		px, py = get_pos_x(), get_pos_y()
-		if px == x and py == y:
-			return
-
-		dx = x - px
-		dy = y - py
-
-		if dx > 0:
-			if dx > half:
-				move(West)
-			else:
-				move(East)
-		elif dx < 0:
-			if abs(dx) > half:
-				move(East)
-			else:
-				move(West)
-
-		if dy > 0:
-			if dy > half:
-				move(South)
-			else:
-				move(North)
-		elif dy < 0:
-			if abs(dy) > half:
-				move(North)
-			else:
-				move(South)
 
 
 if __name__ == "__main__":

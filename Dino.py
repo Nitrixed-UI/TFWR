@@ -1,61 +1,20 @@
+from Helpers import goto
+
+
 def calculate_pair_steps(world_size):
 	return ((world_size - 6) // 2 + 2)
 
 
-def try_move(direction):
-	return move(direction)
-
-
-def move_home():
-	while get_pos_x() != 0:
-		try_move(West)
-
-	while get_pos_y() != 0:
-		try_move(South)
-
-
 def return_and_reset():
 	change_hat(Hats.Straw_Hat)
-	move_home()
+	goto(0, 0)
 	change_hat(Hats.Dinosaur_Hat)
 	perform_dino_pattern()
 
 
-def move_north_or_reset():
-	if not try_move(North):
-		return_and_reset()
-		return False
-
-	return True
-
-
-def move_east_or_reset():
-	if not try_move(East):
-		return_and_reset()
-		return False
-
-	return True
-
-
-def move_south_or_reset():
-	if not try_move(South):
-		return_and_reset()
-		return False
-
-	return True
-
-
-def move_west_or_reset():
-	if not try_move(West):
-		return_and_reset()
-		return False
-
-	return True
-
-
 def repeat_move(direction, steps):
 	for _ in range(steps):
-		if not try_move(direction):
+		if not move(direction):
 			return_and_reset()
 			return False
 
@@ -109,7 +68,7 @@ def main():
 
 
 	change_hat(Hats.Straw_Hat)
-	move_home()
+	goto(0, 0)
 	change_hat(Hats.Dinosaur_Hat)
 	while True:
 		perform_dino_pattern()

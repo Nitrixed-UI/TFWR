@@ -1,3 +1,7 @@
+import FarmingUtils
+import FarmingChecks
+from Helpers import goto
+
 WORLD_SIZE = get_world_size()
 MAX_DRONES = max_drones()
 SPAWN_LIMIT = min(WORLD_SIZE, MAX_DRONES)
@@ -21,7 +25,7 @@ def plant_all_sunflowers():
 	global WORLD_SIZE
 	global SPAWN_LIMIT
 	for row in range(WORLD_SIZE):
-		move_to(0, row)
+		goto(0, row)
 
 		handled = False
 		if num_drones() >= SPAWN_LIMIT:
@@ -31,7 +35,7 @@ def plant_all_sunflowers():
 		if not handled:
 			spawn_drone(plant_row)
 
-	move_to(0, 1)
+	goto(0, 1)
 	while num_drones() > 1:
 		pass
 
@@ -40,10 +44,9 @@ def plant_row():
 	global WORLD_SIZE
 	row = get_pos_y()
 	for col in range(WORLD_SIZE):
-		move_to(col, row)
-		if get_ground_type() != Grounds.Soil:
-			till()
-		if get_entity_type() != Entities.Sunflower:
+		goto(col, row)
+		FarmingUtils.Till()
+		if not FarmingChecks.is_over(Entities.Sunflower):
 			plant(Entities.Sunflower)
 
 
@@ -57,7 +60,7 @@ def scan_all_sunflowers():
 		row_results.append([])
 
 	for row in range(WORLD_SIZE):
-		move_to(0, row)
+		goto(0, row)
 
 		handled = False
 		if num_drones() >= SPAWN_LIMIT:
@@ -67,7 +70,7 @@ def scan_all_sunflowers():
 		if not handled:
 			spawn_drone(scan_row)
 
-	move_to(0, 1)
+	goto(0, 1)
 	while num_drones() > 1:
 		pass
 
@@ -87,8 +90,8 @@ def scan_row():
 	global row_results
 	row = get_pos_y()
 	for col in range(WORLD_SIZE):
-		move_to(col, row)
-		if get_entity_type() == Entities.Sunflower:
+		goto(col, row)
+		if FarmingChecks.is_over(Entities.Sunflower):
 			petals = measure()
 			row_results[row].append([col, petals])
 
@@ -117,7 +120,7 @@ def harvest_priority_sequential(sunflowers):
 		pos = find_max_position(sunflowers, harvested)
 		if pos == None:
 			break
-		move_to(pos[0], pos[1])
+		goto(pos[0], pos[1])
 		harvest()
 		harvested.add(pos)
 		remaining -= 1
@@ -129,7 +132,7 @@ def harvest_tail_parallel():
 	global WORLD_SIZE
 	global SPAWN_LIMIT
 	for row in range(WORLD_SIZE):
-		move_to(0, row)
+		goto(0, row)
 
 		handled = False
 		if num_drones() >= SPAWN_LIMIT:
@@ -139,7 +142,7 @@ def harvest_tail_parallel():
 		if not handled:
 			spawn_drone(harvest_tail_row)
 
-	move_to(0, 1)
+	goto(0, 1)
 	while num_drones() > 1:
 		pass
 
@@ -148,44 +151,9 @@ def harvest_tail_row():
 	global WORLD_SIZE
 	row = get_pos_y()
 	for col in range(WORLD_SIZE):
-		move_to(col, row)
-		if get_entity_type() == Entities.Sunflower:
+		goto(col, row)
+		if FarmingChecks.is_over(Entities.Sunflower):
 			harvest()
-
-
-def move_to(x, y):
-	global WORLD_SIZE
-	half = WORLD_SIZE / 2
-
-	while True:
-		px, py = get_pos_x(), get_pos_y()
-		if px == x and py == y:
-			return
-
-		dx = x - px
-		dy = y - py
-
-		if dx > 0:
-			if dx > half:
-				move(West)
-			else:
-				move(East)
-		elif dx < 0:
-			if abs(dx) > half:
-				move(East)
-			else:
-				move(West)
-
-		if dy > 0:
-			if dy > half:
-				move(South)
-			else:
-				move(North)
-		elif dy < 0:
-			if abs(dy) > half:
-				move(North)
-			else:
-				move(South)
 
 
 if __name__ == "__main__":
